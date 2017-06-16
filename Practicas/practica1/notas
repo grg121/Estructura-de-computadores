@@ -1,0 +1,6 @@
+en el entorno Linux de ensamblador primero se pone el elemento fuente y después el destino:
+mov %rdx,%r9
+En Intel es al contrario:
+mov r9, rdx
+
+Además, en Linux los identificadores llevan delante "%" 

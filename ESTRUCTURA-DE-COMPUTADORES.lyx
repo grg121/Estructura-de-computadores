@@ -1,0 +1,231 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass report
+\use_default_options true
+\maintain_unincluded_children false
+\language spanish
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+ESTRUCTURA DE COMPUTADORES
+\end_layout
+
+\begin_layout Author
+Francisco Navarro Morales
+\end_layout
+
+\begin_layout Part
+Introducción.
+\end_layout
+
+\begin_layout Chapter
+HAMACHER [1]
+\end_layout
+
+\begin_layout Section
+Unidades funcionales del computador.
+\end_layout
+
+\begin_layout Standard
+Un computador se compone de cinco partes principales funcionalmente 
+\emph on
+independientes 
+\end_layout
+
+\begin_layout Itemize
+Unidad de entrada: acepta información codificada procedente de operadores
+ humanos, dispositivos electromecánicos (como un teclado) o de otros computadore
+s.
+\end_layout
+
+\begin_layout Itemize
+Memoria.
+\end_layout
+
+\begin_layout Itemize
+Unidad aritmético-lógica.
+\end_layout
+
+\begin_layout Itemize
+Unidad de control.
+\end_layout
+
+\begin_layout Itemize
+Unidad de salida.
+\end_layout
+
+\begin_layout Standard
+Llamaremos procesador al conjunto de curcuitos aritméticos y lógicos junto
+ con la unidad de control, y E/S al conjunto de las unidades de entrada
+ y salida.
+\end_layout
+
+\begin_layout Standard
+Es muy importante clasificar la información contenida en memoria como datos
+ o instrucciones.
+ 
+\end_layout
+
+\begin_layout Standard
+Una instrucción es una orden explícita que regula la transferencia de informació
+n dentro del ordenador o entre el computador y los dispositivos de E/S.
+ Además, son órdenes que especifican las operaciones aritméticas y lógicas
+ que se han de realizar.
+ 
+\end_layout
+
+\begin_layout Standard
+Se denomina programa a una lista de instrucciones que lleva a cabo una tarea.
+\end_layout
+
+\begin_layout Standard
+Los datos son números y carácteres codificados que son usados como operandos
+ de las instrucciones, aunque generalmente se llama dato a cualquier información
+ digital.
+\end_layout
+
+\begin_layout Subsection
+Unidad de entrada
+\end_layout
+
+\begin_layout Standard
+Los computadores acceptan información codificada a través de las unidades
+ de entrada, tales como un teclado, un micrófono, un joystick etc..
+\end_layout
+
+\begin_layout Standard
+También entendemos como entrada de datos aquellos que llegan de otros coputadore
+s a través de los distintos tipos de redes o de dispositivos extraibles
+ como un pendrive o un CD.
+\end_layout
+
+\begin_layout Subsection
+Unidad de memoria
+\end_layout
+
+\begin_layout Standard
+Almacena programas y datos.
+ Hay dos clases de almacenamiento:
+\end_layout
+
+\begin_layout Description
+Almacenamiento
+\begin_inset space ~
+\end_inset
+
+primario: es una memoria rápida, en la que deben almacenarse los programas
+ para poder ser ejecutados.
+ Se compone de numerosas celdas capaces de almacenar bits de información
+ que rara vez se leen o se escriben individualmente.
+ En lugar de eso, se procesan en grupos de tamaño fijo llamados 
+\emph on
+palabras 
+\emph default
+(de 
+\emph on
+n 
+\emph default
+bits)
+\begin_inset Newline newline
+\end_inset
+
+Al número de bits de cada palabra se le conoce como 
+\emph on
+longitud de palabra 
+\emph default
+del computador.
+ La memoria en la que cualquier posición puede alcanzarse en un tiempo corto
+ se llaman memorias de acceso aleatorio (RAM).
+ El tiempo requerido para acceder a una palabras se llama 
+\emph on
+tiempo de acceso.
+ 
+\emph default
+Este tiempo es fijo independientemente de la posición de la palabra.
+ 
+\end_layout
+
+\begin_layout Description
+Almacenamiento
+\begin_inset space ~
+\end_inset
+
+secundario: dado que el almacenamiento primario tiende a ser caro, aparece
+ el almacenamiento secundario, que es más barato, para almacenar datos a
+ los que se accede con menos frecuencia.
+\end_layout
+
+\begin_layout Subsection
+Unidad Aritmético-lógica
+\end_layout
+
+\begin_layout Standard
+En ella se ejecutan la mayoría de opraciones del computador.
+ 
+\end_layout
+
+\end_body
+\end_document

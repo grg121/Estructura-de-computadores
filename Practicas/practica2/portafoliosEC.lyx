@@ -1,0 +1,1944 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass report
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family ttdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\headheight 2cm
+\headsep 2cm
+\footskip 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\listings_params "language={[x86masm]Assembler},keywordstyle={\color{blue}},stringstyle={\color{red}},commentstyle={\color{magenta}},morecomment={[l][\color{blue}]{\#}},showstringspaces=false"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+date{}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+Portafolios de prácticas de EC
+\end_layout
+
+\begin_layout Author
+Por Francisco Navarro Morales
+\end_layout
+
+\begin_layout Chapter*
+Práctica 2
+\end_layout
+
+\begin_layout Section*
+Ejercicio 5.1
+\end_layout
+
+\begin_layout Subsection*
+Comprendiendo el funcionamiento de suma.
+\end_layout
+
+\begin_layout Standard
+A continuación un seguimiento de cómo puedo comprobar el funcionamiento
+ de la pila y las ordenes call y ret.
+\end_layout
+
+\begin_layout Standard
+En primer lugar hay que tener en cuenta que si ejecutamos 0x80 realizamos
+ una subrutina de servicio, que leerá de EAX el número de servicio a realizar,
+ y utilizará como 
+\begin_inset Quotes eld
+\end_inset
+
+argumentos
+\begin_inset Quotes erd
+\end_inset
+
+ el contenido de los registros EBX, ECX, EDX...
+\end_layout
+
+\begin_layout Standard
+Para ver el funcionamiento de la pila:
+\end_layout
+
+\begin_layout Enumerate
+Compilamos el programa suma.s con opciones de debug: 
+\begin_inset Quotes eld
+\end_inset
+
+as --32 -g suma.s o suma.o
+\begin_inset Quotes erd
+\end_inset
+
+ + 
+\begin_inset Quotes eld
+\end_inset
+
+ld -m elf_i386 suma.o -o suma
+\begin_inset Quotes erd
+\end_inset
+
+ y ejecutamos con ddd (
+\begin_inset Quotes eld
+\end_inset
+
+ddd suma
+\begin_inset Quotes erd
+\end_inset
+
+) 
+\end_layout
+
+\begin_layout Enumerate
+Establecemos un breakpoint al comienzo el programa para que este se detenga
+ al lanzarlo con run.
+ Avanzamos instrucción a instrucción con 
+\begin_inset Quotes eld
+\end_inset
+
+step
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Las primera instruccione simplemente colocan los 
+\begin_inset Quotes eld
+\end_inset
+
+argumentos
+\begin_inset Quotes erd
+\end_inset
+
+ de la función suma en su sitio, (registros ebx, ecx...).
+ Al llegal a la llamada al sistema (Call suma) comprobamos la dirección
+ de la instrucción que sigue a Call suma, que en este caso es 0x08048099,
+ con la llamada al sistema, esta dirección queda almacenada en la pila.
+\end_layout
+
+\begin_layout Enumerate
+Podemos comprobar los valores de la pila con el menú 
+\begin_inset Quotes eld
+\end_inset
+
+Data->memory
+\begin_inset Quotes erd
+\end_inset
+
+ y rellenando: 
+\begin_inset Newline newline
+\end_inset
+
+examine: 5 (por ejemplo) , hex, bytes, from $esp 
+\begin_inset Newline newline
+\end_inset
+
+El valor que habrá en el tope de la pila será precisamente 0x08048099, cuando
+ termine de ejecutarse la función suma, la llamada a 
+\begin_inset Quotes eld
+\end_inset
+
+ret
+\begin_inset Quotes erd
+\end_inset
+
+ devolverá la ejecución a esta dirección y la eliminará de la pila.
+\end_layout
+
+\begin_layout Enumerate
+Respecto a la funcion suma:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+suma:
+\end_layout
+
+\begin_layout Plain Layout
+
+	push %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+	mov $0, %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+	mov $0, %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+bucle:
+\end_layout
+
+\begin_layout Plain Layout
+
+	add (%ebx,%edx,4), %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+	inc       %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+	cmp  %edx,%ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+	jne bucle
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	pop %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+	ret
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+push %edx almacena el valor de edx en la pila, en este caso %edx no contiene
+ nada importante, pero si tuviera algún valor no querríamos perderlo, y
+ dado que vamos a utilizar este registro como índice del bucle, conviene
+ guardar su valor.
+ 
+\begin_inset Newline newline
+\end_inset
+
+eax será el registro donde se guarde el resultado de la función (ocurre
+ así por defecto); por ello, y dado que ya se ha realizado la llamada a
+ la subrutina y el código contenido en eax no nos es útil, lo ponemos a
+ 0, (al igual que edx, que como hemos dicho, va a ser el índice del bucle)
+ para ir sumando sobre ese valor 0.
+\end_layout
+
+\begin_layout Enumerate
+respecto a instrucción add(%ebx,%edx,4), %eax ; esta instrucción tiene,
+ como la mayoría, una fuente y un destino.
+ En este caso la fuente depende de tres 
+\begin_inset Quotes eld
+\end_inset
+
+parámetros
+\begin_inset Quotes erd
+\end_inset
+
+ (%ebx,%edx,4) estos son: el primero (%ebx) es el registro base, es decir,
+ a partir del cual vamos a calcular la dirección que será la fuente del
+ comando add; el segundo (%edx) será el registro índice (ya lo hemos comentado
+ antes), indica cuantas 
+\begin_inset Quotes eld
+\end_inset
+
+posiciones
+\begin_inset Quotes erd
+\end_inset
+
+ debe incrementarse la dirección base.
+ El tercer parámetro es un número entero y se refiere al tamaño de las posicione
+s que se avanza el vector.
+ Es una constante multiplicativa que indica el tamaño del dato del vector,
+ así en este caso vale cuatro porque se refiere a bytes, 
+\begin_inset Formula $4B=2^{3}*4bits=2^{5}bits=32bits$
+\end_inset
+
+, que es el tamaño que ocupa cada número del vector.
+ Si, por ejemplo, fuera un vector de números de 64 bits, el valor debería
+ ser 8).
+\end_layout
+
+\begin_layout Enumerate
+inc %edx solo incrementa el índice del bucle
+\end_layout
+
+\begin_layout Enumerate
+las instrucciones cmp y jne hacen la comprobación del bucle, jne comprueba
+ si los argumentos de cmp son iguales y, si no lo son, 
+\begin_inset Quotes eld
+\end_inset
+
+salta
+\begin_inset Quotes erd
+\end_inset
+
+ a la primera instrucción del bucle.
+ En caso de que sean iguales, es decir, que el índice se corresponda con
+ el contenido de ecx (que tenía el total de números a sumar), jne no hace
+ nada y el programa continúa su ejecución por la siguiente instrucción.
+\end_layout
+
+\begin_layout Enumerate
+finalmente pop %edx recupera el valor que edx tenía antes y ret devuelve
+ la ejecución a la orden siguiente a 
+\begin_inset Quotes eld
+\end_inset
+
+call suma
+\begin_inset Quotes erd
+\end_inset
+
+, cuya dirección se había almacenado en la pila (también la elimina de la
+ pila).
+\end_layout
+
+\begin_layout Enumerate
+Las últimas instrucciones copian el resultado de la función en 
+\begin_inset Quotes eld
+\end_inset
+
+resultado
+\begin_inset Quotes erd
+\end_inset
+
+ (desde eax, que es donde se ha almacenado).
+ Después resultado se añade a la pila dos veces, al igual que el formato,
+ y se hace una llamada a la subrutina printf, que hace un pop de los tres
+ últimos elementos de la pila, de forma que estos son 
+\begin_inset Quotes eld
+\end_inset
+
+formato, resultado, resultado
+\begin_inset Quotes erd
+\end_inset
+
+ y muestra por pantalla el resultado en ASCII decimal/hex (formato).
+\end_layout
+
+\begin_layout Enumerate
+Finalmente se añaden doce posiciones (bytes) a la pila, se coloca el valor
+ 1 en eax y el valor 0 en ebx y se llama a la subrutina _exit(0) ejecutando
+ 0x80; es decir, el programa imprime en pantalla el resultado y devuelve
+ un valor de retorno 0.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Sumar N enteros sin signo de 32 bits en una plataforma de 32bits sin perder
+ precisión.
+\end_layout
+
+\begin_layout Standard
+Mi código es el siguiente:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+  # Suma.s
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  .section .data
+\end_layout
+
+\begin_layout Plain Layout
+
+	  .macro linea # (tal y como se indica en el guión)
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 0xFC000000, 0xFC000000, 0xFC000000, 0xFC000000
+\end_layout
+
+\begin_layout Plain Layout
+
+	        .int 1,1,1,1
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 2,2,2,2
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 1,2,3,4
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int -1,-1,-1,-1
+\end_layout
+
+\begin_layout Plain Layout
+
+	  .endm
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+lista:   .irpc i,12345678
+\end_layout
+
+\begin_layout Plain Layout
+
+	  linea
+\end_layout
+
+\begin_layout Plain Layout
+
+	  .endr
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+longlista:   .int (.-lista)/4
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resultado:   .quad 0x0123456789ABCDEF
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	#  FE CD AB 89 67 45 23 01 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# 100 101 102.....
+ (little endian)
+\end_layout
+
+\begin_layout Plain Layout
+
+  #asigna a los menos significativos posiciones de memoria menores
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+formato: .ascii "suma = %llu = %llx 
+\backslash
+n
+\backslash
+0"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  .section .text
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+main: .global main
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /** ebx es el puntero al array (primera posición)␣
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** ecx es una especie de "total utilizados" del array
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** call suma llama a la función y guarda la dirección
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** de la siguiente instrucción en stack
+\end_layout
+
+\begin_layout Plain Layout
+
+  */
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $lista, %ebx
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov longlista, %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+  call suma 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** $eax contiene la parte más significativa de resultado,
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** %edx la menos significativa.
+ Para concatenar %eax y %ebx
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** en resultado movemos la parte más significativa a resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** y luego la menos significativa 4B por delante (resultado + 4 )
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** Como no existe push de 64 bits, tenemos que hacer dos push para
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** meter resultado en la pila, como además el formato de printf
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** requiere que resultado esté dos veces en la pila, hacemos un
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** total de 4 push.
+ Push del formato  y finalmente llamamos a printf.
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** tras ejecutar printf hay que retirar las dos instancias de resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** y el formato de la pila, como esto ocupa 12 Bytes (4B cada dato) hacemos
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** add $12 al puntero de la pila %esp
+\end_layout
+
+\begin_layout Plain Layout
+
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov %eax, resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov %edx, resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+  push $formato
+\end_layout
+
+\begin_layout Plain Layout
+
+  call printf
+\end_layout
+
+\begin_layout Plain Layout
+
+  add $12, %esp
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  //  Preparamos la salida, return(0) y llamamos a la subrutina adecuada
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $1, %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %ebx
+\end_layout
+
+\begin_layout Plain Layout
+
+  int $0x80
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+
+    * cargamos %esi en pila para conservar su valor
+\end_layout
+
+\begin_layout Plain Layout
+
+    * ponemos a 0 los registros que vamos a usar: %eax y %edx para resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+    * %esi será el índice de lectura
+\end_layout
+
+\begin_layout Plain Layout
+
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+
+suma:
+\end_layout
+
+\begin_layout Plain Layout
+
+  push %esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+
+   * suma el elemento numero  %esi del array apuntado por %ebx en %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+   * comprueba si hay acarreo, si no lo hay salta la siguiente instrucción.
+\end_layout
+
+\begin_layout Plain Layout
+
+   * En caso de que sí haya acarreo, incremente %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+
+bucle:
+\end_layout
+
+\begin_layout Plain Layout
+
+  add (%ebx, %esi, 4), %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  jnc endif
+\end_layout
+
+\begin_layout Plain Layout
+
+  inc %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+
+   * incrementa el indice de lectura y lo compara con %ecx,
+\end_layout
+
+\begin_layout Plain Layout
+
+   * que tiene el total de iteraciones si coincide, jne no
+\end_layout
+
+\begin_layout Plain Layout
+
+   * tiene efecto y se continua por la instrucción pop %esi,
+\end_layout
+
+\begin_layout Plain Layout
+
+   * si no coincide se repite el bucle (salta a la etiqueta bucle)
+\end_layout
+
+\begin_layout Plain Layout
+
+   * Pop %esi recupera el valor que tenía el registro
+\end_layout
+
+\begin_layout Plain Layout
+
+  **/ 
+\end_layout
+
+\begin_layout Plain Layout
+
+endif: 
+\end_layout
+
+\begin_layout Plain Layout
+
+  inc %esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  cmp %esi, %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+  jne bucle
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  pop %esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  ret
+\end_layout
+
+\begin_layout Plain Layout
+
+  // retorno de ejecución a la siguiente instrucción a call suma.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Ejercicio 5.2
+\end_layout
+
+\begin_layout Standard
+He reutilizado el código anterior cambiando algunos aspectos:
+\end_layout
+
+\begin_layout Itemize
+Ahora el formato devuelto en el printf es lld
+\end_layout
+
+\begin_layout Itemize
+La función suma ahora necesita utilizar los registros edx, esi, edi y eax,
+ por lo que no he podido utilizar %esi como 
+\begin_inset Quotes eld
+\end_inset
+
+índice
+\begin_inset Quotes erd
+\end_inset
+
+ del bucle.
+ En su lugar he utilizado el propio %ecx, que tiene el máximo de iteraciones,
+ decrementandolo una unidad al principio para evitar que acceda a la posición
+ vector[longitud_lista] (que produciría un segmentation fault) y después
+ decremento dicho valor en cada iteración (la suma final es igual independientem
+ente de si se suman las posiciones de la 0 a la longitud-1 que al revés).
+ 
+\end_layout
+
+\begin_layout Itemize
+He optado por la segunda opción propuesta, usando la instrucción CDQ para
+ extender el signo de %eax en %edx.
+ Lo que hago ahora es mover a %eax el dato a sumar, extender su signo a
+ %edx y luego sumar en %esi y %edi, la parte más significativa con adc y
+ la menos con add.
+ 
+\end_layout
+
+\begin_layout Itemize
+También he modificado la forma de hacer la comprobación para salir del bucle,
+ esta vez he usado je en lugar de jne.
+ Además, he dejado el decremento después de la comprobación.
+ Esto se debe a que sí debe iterar cuando $ecx vale 0, pero no cuando vale
+ -1.
+ Por eso primero se ejecuta el cuerpo del bucle, después se comprueba si
+ %ecx vale 0, y por último se decrementa el índice, solo si %ecx no valía
+ cero.
+ En el momento en que la comparación sea true (%ecx == 0) no se hará el
+ decremento y se saltará a 
+\begin_inset Quotes eld
+\end_inset
+
+zero:
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+También he tenido que pasar después %esi a %eax y %edi a %edx para que todo
+ funcione correctament
+\end_layout
+
+\begin_layout Standard
+El código es:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+   # Suma.s
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  .section .data
+\end_layout
+
+\begin_layout Plain Layout
+
+	  .macro linea # (tal y como se indica en el guión)
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 0xFC000000, 0xFC000000, 0xFC000000, 0xFC000000
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 1,1,1,1
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 2,2,2,2
+\end_layout
+
+\begin_layout Plain Layout
+
+	        #.int 1,2,3,4
+\end_layout
+
+\begin_layout Plain Layout
+
+	        .int -1,-1,-1,-1
+\end_layout
+
+\begin_layout Plain Layout
+
+	  .endm
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+lista:   .irpc i,12345678
+\end_layout
+
+\begin_layout Plain Layout
+
+	  linea
+\end_layout
+
+\begin_layout Plain Layout
+
+	  .endr
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+longlista:   .int (.-lista)/4
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+resultado:   .quad 0x0123456789ABCDEF
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	#  FE CD AB 89 67 45 23 01 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# 100 101 102.....
+ (little endian)
+\end_layout
+
+\begin_layout Plain Layout
+
+  #asigna a los menos significativos posiciones de memoria menores
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+formato: .ascii "suma = %lld = %llx 
+\backslash
+n
+\backslash
+0"
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  .section .text
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+main: .global main
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /** ebx es el puntero al array (primera posición)
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** ecx es una especie de "total utilizados" del array
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** call suma llama a la función y guarda la dirección
+\end_layout
+
+\begin_layout Plain Layout
+
+   ** de la siguiente instrucción en stack
+\end_layout
+
+\begin_layout Plain Layout
+
+  */
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $lista, %ebx
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov longlista, %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+  call suma
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov %eax, resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov %edx, resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+
+  push resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+  push $formato
+\end_layout
+
+\begin_layout Plain Layout
+
+  call printf
+\end_layout
+
+\begin_layout Plain Layout
+
+  add $12, %esp
+\end_layout
+
+\begin_layout Plain Layout
+
+  //  Preparamos la salida, return(0) y llamamos a la subrutina adecuada
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $1, %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %ebx
+\end_layout
+
+\begin_layout Plain Layout
+
+  int $0x80
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+
+    * ponemos a 0 los registros que vamos a usar: %eax y %edx para resultado
+\end_layout
+
+\begin_layout Plain Layout
+
+    * %esi será el índice de lectura
+\end_layout
+
+\begin_layout Plain Layout
+
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+
+suma:
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %edx
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %edi
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov $0, %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  dec %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+
+   * (se suma de la posición %ecx -1 a la 0, restando)
+\end_layout
+
+\begin_layout Plain Layout
+
+   * pone el elemento numero  %ecx del array apuntado por %ebx
+\end_layout
+
+\begin_layout Plain Layout
+
+   * en %eax, extiende el signo de %eax en %edx:%eax y después
+\end_layout
+
+\begin_layout Plain Layout
+
+   * mueve %eax a %esi y %edx a %edi
+\end_layout
+
+\begin_layout Plain Layout
+
+   * resultado = %edi:%esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+
+bucle:
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov (%ebx,%ecx,4), %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  cdq
+\end_layout
+
+\begin_layout Plain Layout
+
+  // extensión de signo de %eax en %edx:%eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  add %eax, %esi
+\end_layout
+
+\begin_layout Plain Layout
+
+  adc %edx, %edi
+\end_layout
+
+\begin_layout Plain Layout
+
+  cmp $0, %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+  je zero
+\end_layout
+
+\begin_layout Plain Layout
+
+  dec %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+  jmp bucle
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+zero:
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov %esi, %eax
+\end_layout
+
+\begin_layout Plain Layout
+
+  mov %edi, %edx 
+\end_layout
+
+\begin_layout Plain Layout
+
+  ret
+\end_layout
+
+\begin_layout Plain Layout
+
+  // retorno de ejecución a la siguiente instrucción a call suma.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Ejercicio 5.3
+\end_layout
+
+\begin_layout Standard
+Para calcular la media basta con dividir el resultado obtenido de la suma
+ entre longlist.
+ Dado que se trata de números con signo, utilizaré la instrucción DIV longlista,
+ 
+\end_layout
+
+\begin_layout Standard
+que realiza la división EDX:EAX/longlista y almacena el cociente de la división
+ en EAX y el cociente en EDX, que precisamente son los registros que la
+ llamada a suma 
+\begin_inset Quotes eld
+\end_inset
+
+devuelve
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+y que el programa lee al finalizar.
+\end_layout
+
+\begin_layout Standard
+En principio parece que no hay que hacer más cambios.
+ El programa final se queda así: 
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+  # Suma.s
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  .section .data
+\end_layout
+
+\begin_layout Plain Layout
+	  .macro linea # (tal y como se indica en el guión)
+\end_layout
+
+\begin_layout Plain Layout
+	        #.int 0xFC000000, 0xFC000000, 0xFC000000, 0xFC000000
+\end_layout
+
+\begin_layout Plain Layout
+		 .int 1,-2,1,-2	        
+\end_layout
+
+\begin_layout Plain Layout
+		#.int 1,1,1,1
+\end_layout
+
+\begin_layout Plain Layout
+	        #.int 2,2,2,2
+\end_layout
+
+\begin_layout Plain Layout
+	        #.int 1,2,3,4
+\end_layout
+
+\begin_layout Plain Layout
+	        #.int -1,-1,-1,-1
+\end_layout
+
+\begin_layout Plain Layout
+	  .endm
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+lista:   .irpc i,12345678
+\end_layout
+
+\begin_layout Plain Layout
+	  linea
+\end_layout
+
+\begin_layout Plain Layout
+	  .endr
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+longlista:   .int (.-lista)/4
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+resultado:   .quad 0x0123456789ABCDEF
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+	#  FE CD AB 89 67 45 23 01 
+\end_layout
+
+\begin_layout Plain Layout
+	# 100 101 102.....
+ (little endian)
+\end_layout
+
+\begin_layout Plain Layout
+  #asigna a los menos significativos posiciones de memoria menores
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+formato: .ascii "media = 
+\backslash
+n
+\backslash
+tcociente: %8d = %0x%08x 
+\backslash
+n
+\backslash
+tresto: %11d = %0x%08x
+\backslash
+n
+\backslash
+0 "
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  .section .text
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+main: .global main
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  /** ebx es el puntero al array (primera posición)
+\end_layout
+
+\begin_layout Plain Layout
+   ** ecx es una especie de "total utilizados" del array
+\end_layout
+
+\begin_layout Plain Layout
+   ** call suma llama a la función y guarda la dirección
+\end_layout
+
+\begin_layout Plain Layout
+   ** de la siguiente instrucción en stack
+\end_layout
+
+\begin_layout Plain Layout
+  */
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  mov $lista, %ebx
+\end_layout
+
+\begin_layout Plain Layout
+  mov longlista, %ecx
+\end_layout
+
+\begin_layout Plain Layout
+  call suma
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  mov %eax, resultado
+\end_layout
+
+\begin_layout Plain Layout
+  mov %edx, resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+  push resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+  push resultado+4
+\end_layout
+
+\begin_layout Plain Layout
+  push resultado
+\end_layout
+
+\begin_layout Plain Layout
+  push resultado
+\end_layout
+
+\begin_layout Plain Layout
+  push $formato
+\end_layout
+
+\begin_layout Plain Layout
+  call printf
+\end_layout
+
+\begin_layout Plain Layout
+  add $12, %esp
+\end_layout
+
+\begin_layout Plain Layout
+  //  Preparamos la salida, return(0) y llamamos a la subrutina adecuada
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  mov $1, %eax
+\end_layout
+
+\begin_layout Plain Layout
+  mov $0, %ebx
+\end_layout
+
+\begin_layout Plain Layout
+  int $0x80
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+    * ponemos a 0 los registros que vamos a usar: %eax y %edx para resultado
+\end_layout
+
+\begin_layout Plain Layout
+    * %esi será el índice de lectura
+\end_layout
+
+\begin_layout Plain Layout
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+suma:
+\end_layout
+
+\begin_layout Plain Layout
+  mov $0, %edx
+\end_layout
+
+\begin_layout Plain Layout
+  mov $0, %esi
+\end_layout
+
+\begin_layout Plain Layout
+  mov $0, %edi
+\end_layout
+
+\begin_layout Plain Layout
+  mov $0, %eax
+\end_layout
+
+\begin_layout Plain Layout
+  dec %ecx
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+  /**
+\end_layout
+
+\begin_layout Plain Layout
+   * (se suma de la posición %ecx -1 a la 0, restando)
+\end_layout
+
+\begin_layout Plain Layout
+   * pone el elemento numero  %ecx del array apuntado por %ebx
+\end_layout
+
+\begin_layout Plain Layout
+   * en %eax, extiende el signo de %eax en %edx:%eax y después
+\end_layout
+
+\begin_layout Plain Layout
+   * mueve %eax a %esi y %edx a %edi
+\end_layout
+
+\begin_layout Plain Layout
+   * resultado = %edi:%esi
+\end_layout
+
+\begin_layout Plain Layout
+  **/
+\end_layout
+
+\begin_layout Plain Layout
+bucle:
+\end_layout
+
+\begin_layout Plain Layout
+  mov (%ebx,%ecx,4), %eax
+\end_layout
+
+\begin_layout Plain Layout
+  cdq
+\end_layout
+
+\begin_layout Plain Layout
+  // extensión de signo de %eax en %edx:%eax
+\end_layout
+
+\begin_layout Plain Layout
+  add %eax, %esi
+\end_layout
+
+\begin_layout Plain Layout
+  adc %edx, %edi
+\end_layout
+
+\begin_layout Plain Layout
+  cmp $0, %ecx
+\end_layout
+
+\begin_layout Plain Layout
+  je zero
+\end_layout
+
+\begin_layout Plain Layout
+  dec %ecx
+\end_layout
+
+\begin_layout Plain Layout
+  jmp bucle
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+zero:
+\end_layout
+
+\begin_layout Plain Layout
+  mov %esi, %eax
+\end_layout
+
+\begin_layout Plain Layout
+  mov %edi, %edx
+\end_layout
+
+\begin_layout Plain Layout
+  idivl longlista
+\end_layout
+
+\begin_layout Plain Layout
+  ret
+\end_layout
+
+\begin_layout Plain Layout
+  // retorno de ejecución a la siguiente instrucción a call suma.
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
